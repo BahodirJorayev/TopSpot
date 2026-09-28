@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TopSpot — Kinetik Ijara & Xizmatlar Ekotizimi</title>
+  
+  <!-- Favicon & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Brand Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ======================================================================
+       2. INTRO VA LOADING ANIMATSIYASI (TOPSPOT LOGO DOCKING ANIMATION)
+       ====================================================================== -->
+  <div id="intro-screen">
+    <div class="intro-container">
+      <div class="logo-animation-wrapper">
+        <!-- White Architectural Chevron (descending from top) -->
+        <svg class="intro-chevron" viewBox="0 0 100 70" fill="none">
+          <path d="M50 15L85 50L75 60L50 35L25 60L15 50L50 15Z" fill="#FFFFFF"/>
+        </svg>
+
+        <!-- Kinetic Orange Core (rising from bottom) -->
+        <svg class="intro-core" viewBox="0 0 50 50" fill="none">
+          <circle cx="25" cy="25" r="18" fill="#FF5500"/>
+          <circle cx="25" cy="25" r="23" stroke="#FF5500" stroke-width="2" stroke-opacity="0.5"/>
+        </svg>
+
+        <div class="intro-glow-ring"></div>
+      </div>
+
+      <div class="intro-brand-title">TOP<span>SPOT</span></div>
+      <div class="intro-tagline">Kinetik Ijara & Xizmatlar Ekotizimi</div>
+
+      <div class="intro-loading-box">
+        <div class="intro-progress-bar">
+          <div class="intro-progress-fill"></div>
+        </div>
+
+        <div class="intro-status-text">
+          <div class="gps-radar-dot"></div>
+          <span>GPS klasterlari faollashtirilmoqda...</span>
+        </div>
+
+        <div id="intro-coord" class="intro-coord-preview">
+          GPS klaster: 41.31108° N, 69.24056° E
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       SITE HEADER
+       ====================================================================== -->
+  <header class="site-header">
+    <div class="header-container">
+      <!-- Brand Logo -->
+      <div class="brand-logo-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="logo-symbol">
+          <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+            <path d="M20 5L34 20L29 25L20 16L11 25L6 20L20 5Z" fill="#FFFFFF"/>
+            <circle cx="20" cy="28" r="7" fill="#FF5500"/>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <div class="brand-name">TOP<span>SPOT</span></div>
+          <div class="brand-sub">Kinetic Platform</div>
+        </div>
+      </div>
+
+      <!-- Geo Cluster Live Badge -->
+      <div class="header-geo-badge">
+        <div class="geo-live-pulse"></div>
+        <span>Faol hudud: <strong>Toshkent markazi</strong> (Amir Temur)</span>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button class="btn-header-action" onclick="alert('TopSpot hamkorlik xizmati: STIR va OneID orqali ro\'yxatdan o\'tish ochiq.')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>OneID Xavfsizlik</span>
+        </button>
+        <button class="btn-header-action btn-primary-action" onclick="alert('Yangi e\'lon joylashtirish formasi tez orada ochiladi.')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>E'lon berish</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       MAIN APPLICATION LAYOUT
+       ====================================================================== -->
+  <main class="main-wrapper">
+
+    <!-- ==================================================================
+         3. E'LONLAR TAXTASI (AUTO-SLIDING CAROUSEL BANNER)
+         ================================================================== -->
+    <section class="carousel-section">
+      <div class="carousel-container" id="carousel-container">
+        <div class="carousel-track" id="carousel-track">
+
+          <!-- SLIDE 1: RESPUBLIKA VIP -->
+          <div class="carousel-slide slide-vip">
+            <div class="slide-content-left">
+              <div class="slide-badge-row">
+                <span class="tier-badge tier-vip">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  RESPUBLIKA VIP
+                </span>
+                <span class="verified-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  OneID & STIR Tasdiqlangan
+                </span>
+              </div>
+              <h2 class="slide-title">CAT 320D Og'ir Ekskavator & Maxsus Texnika Parki</h2>
+              <p class="slide-desc">Respublika bo'ylab yirik infratuzilma loyihalari uchun 24/7 operativ texnik ta'minot. Tajribali boshqaruv operatorlari bilan.</p>
+              <div class="slide-meta-row">
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>24/7 Yetkazish</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Butun O'zbekiston hududi</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>Rasmiy PDF Shartnoma</span>
+                </div>
+              </div>
+            </div>
+            <div class="slide-content-right">
+              <div class="slide-price-tag">
+                <div class="price-sub">Maxsus Taklif</div>
+                <div class="price-main">480,000 <small>so'm/s</small></div>
+              </div>
+              <button class="btn-slide-cta" onclick="window.openProductById('m1')">
+                <span>Obyektni ko'rish</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- SLIDE 2: VILOYAT SHOSHILINCH -->
+          <div class="carousel-slide slide-urgent">
+            <div class="slide-content-left">
+              <div class="slide-badge-row">
+                <span class="tier-badge tier-urgent">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  VILOYAT SHOSHILINCH
+                </span>
+                <span class="verified-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Bojxona Klasteri
+                </span>
+              </div>
+              <h2 class="slide-title">Toshkent Viloyati: 5,000 m² A-Klass Bojxona Ombori & Logistika Markazi</h2>
+              <p class="slide-desc">Zangiota tumani, M-39 xalqaro trassa yoqasida. Bugun bo'shatildi! 8 ta gidravlik rampa va temir yo'l tarmog'i bilan.</p>
+              <div class="slide-meta-row">
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <span>Qo'riqlash 24/7</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Toshkent vil., Zangiota</span>
+                </div>
+              </div>
+            </div>
+            <div class="slide-content-right">
+              <div class="slide-price-tag">
+                <div class="price-sub">Shoshilinch Narx</div>
+                <div class="price-main">850,000 <small>so'm/s</small></div>
+              </div>
+              <button class="btn-slide-cta" onclick="window.openProductById('r1')">
+                <span>Lokatsiyani ko'rish</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- SLIDE 3: TUMAN LOKAL -->
+          <div class="carousel-slide slide-local">
+            <div class="slide-content-left">
+              <div class="slide-badge-row">
+                <span class="tier-badge tier-local">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  TUMAN LOKAL
+                </span>
+                <span class="verified-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  30 Daqiqada Yetkazish
+                </span>
+              </div>
+              <h2 class="slide-title">Yunusobod: Sanoat Dizel Generatorlari (50–250 kVA) va Uskunalar</h2>
+              <p class="slide-desc">Yunusobod 14-mavze bazasi. 3 km radius ichida bepul operativ yetkazish va tajribali elektromontajchi xizmati bilan.</p>
+              <div class="slide-meta-row">
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  <span>Yoqilg'i & ATS ichida</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Yunusobod 14, Toshkent</span>
+                </div>
+              </div>
+            </div>
+            <div class="slide-content-right">
+              <div class="slide-price-tag">
+                <div class="price-sub">Boshlang'ich Narx</div>
+                <div class="price-main">160,000 <small>so'm/s</small></div>
+              </div>
+              <button class="btn-slide-cta" onclick="window.openProductById('e1')">
+                <span>Bog'lanish</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Carousel Navigation Controls -->
+        <button class="carousel-nav-btn carousel-prev" id="carousel-prev" aria-label="Oldingi slayd">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-nav-btn carousel-next" id="carousel-next" aria-label="Keyingi slayd">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+
+        <!-- Dots Pagination -->
+        <div class="carousel-dots" id="carousel-dots">
+          <div class="dot-indicator active" data-slide="0"></div>
+          <div class="dot-indicator" data-slide="1"></div>
+          <div class="dot-indicator" data-slide="2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         4. 4 TA ASOSIY VERTIKAL VA SUB-KATEGORIYALAR
+         ================================================================== -->
+    <section class="verticals-section">
+      <!-- 4 Verticals Grid -->
+      <div class="verticals-grid" id="verticals-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- Subcategories Chips Row -->
+      <div class="subcategories-container" id="subcategories-container">
+        <!-- Rendered dynamically by app.js based on active vertical -->
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         5. SPLIT-SCREEN (40% LISTING / 60% XARITA)
+         ================================================================== -->
+    <section class="split-screen-section">
+
+      <!-- LEFT COLUMN: 40% LISTINGS & FILTERS -->
+      <div class="listings-column">
+        
+        <!-- Controls Card (Radius Slider & Search) -->
+        <div class="listing-controls-card">
+          <div class="controls-row-top">
+            <div class="radius-badge-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              <span>Qidiruv Radiusi</span>
+            </div>
+            <div class="radius-val-display" id="radius-val">8 km</div>
+          </div>
+
+          <!-- 1-15 km Slider -->
+          <div class="slider-wrap">
+            <input type="range" min="1" max="15" value="8" step="1" class="radius-slider" id="radius-slider" aria-label="Qidiruv radiusi">
+          </div>
+          <div class="slider-ticks">
+            <span>1 km (Yaqin)</span>
+            <span>5 km</span>
+            <span>10 km</span>
+            <span>15 km (Maksimal)</span>
+          </div>
+
+          <!-- Search Input -->
+          <div class="search-filter-row">
+            <div class="search-input-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="search-input" placeholder="Nomi, kompaniya yoki STIR bo'yicha qidiring...">
+            </div>
+          </div>
+
+          <div class="items-count-indicator" id="items-count-indicator">
+            <!-- Updated dynamically -->
+          </div>
+        </div>
+
+        <!-- Scrollable Listings Area -->
+        <div class="listings-scroll-area" id="listings-scroll-area">
+          <!-- Standardized Product Cards rendered by app.js -->
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: 60% XARITA (DARK MODE INTERACTIVE MAP) -->
+      <div class="map-column">
+        <!-- Floating Live Radar Header -->
+        <div class="map-radar-control-card">
+          <div class="radar-live-icon"></div>
+          <span>Kinetik GPS Radar: <strong>Faol</strong> (Tungi rejim)</span>
+        </div>
+
+        <!-- Leaflet Map Container -->
+        <div id="topspot-map"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       6. MAHSULOT PASPORTI VA XAVFSIZLIK (MODAL)
+       ====================================================================== -->
+  <div class="modal-backdrop" id="passport-modal">
+    <div class="modal-window">
+      <button class="modal-close-btn" id="passport-close-btn" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <!-- Passport Top Header -->
+      <div class="passport-header">
+        <div class="passport-img-box">
+          <img id="passport-img" src="" alt="Mahsulot rasmi">
+        </div>
+        <div class="passport-title-wrap">
+          <div class="passport-category-badge" id="passport-category">Kategoriya</div>
+          <h2 class="passport-title" id="passport-title">Mahsulot Nomi</h2>
+          <div class="passport-geo-row">
+            <span style="display:flex; align-items:center; gap:5px; color:#10B981;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <strong id="passport-rating">4.95</strong>
+            </span>
+            <span>•</span>
+            <span style="color:#10B981; font-weight:600;">Hozir ijaraga tayyor</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security & Trust Metrics Card (STIR / OneID) -->
+      <div class="security-status-card">
+        <div class="sec-metric-item">
+          <div class="sec-metric-title">Mulkdor Tashkilot</div>
+          <div class="sec-metric-value" id="passport-owner">Kompaniya nomi</div>
+        </div>
+        <div class="sec-metric-item">
+          <div class="sec-metric-title">STIR / INN Raqami</div>
+          <div class="sec-metric-value" style="font-family:monospace; color:#FF5500;" id="passport-stir">308941278</div>
+        </div>
+        <div class="sec-metric-item">
+          <div class="sec-metric-title">Davlat Verifikatsiyasi</div>
+          <div class="sec-metric-value badge-verified-emerald">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>OneID Tasdiqlangan ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ochiq Narx Matritsasi -->
+      <div>
+        <div class="matrix-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span>Standartlashtirilgan Ochiq Narx Matritsasi</span>
+        </div>
+
+        <div class="price-matrix-grid" style="margin-top: 12px;">
+          <div class="matrix-box">
+            <div class="matrix-period">Soatlik Stavka</div>
+            <div class="matrix-price" id="matrix-hourly">0 so'm</div>
+            <div class="matrix-terms">Minimal buyurtma: 2-3 soat</div>
+          </div>
+
+          <div class="matrix-box featured">
+            <div class="matrix-period" style="color:#FF5500;">Kunlik Ijara (Optimal)</div>
+            <div class="matrix-price" id="matrix-daily">0 so'm</div>
+            <div class="matrix-terms">10 soatlik to'liq smena</div>
+          </div>
+
+          <div class="matrix-box">
+            <div class="matrix-period">Oylik Shartnoma</div>
+            <div class="matrix-price" style="color:#FFF;" id="matrix-monthly">0 so'm</div>
+            <div class="matrix-terms">-15% Chegirma bilan</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px; font-size: 0.75rem; color: #94A3B8;">
+          Depozit (Garov sharti): <strong id="matrix-deposit" style="color: #FFF;">0 so'm</strong> • To'lov usullari: Naqd, O'zcard, Humo, Korporativ bank o'tkazmasi.
+        </div>
+      </div>
+
+      <!-- Texnik Parametrlar (Specs) -->
+      <div>
+        <div class="matrix-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Texnik Parametrlar & Xavfsizlik Kafolati</span>
+        </div>
+        <ul id="passport-specs" style="list-style:none; margin-top:10px;"></ul>
+      </div>
+
+      <!-- Real-Time Bandlik Kalendari -->
+      <div class="calendar-section">
+        <div class="matrix-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Real Vaqtdagi Bandlik Kalendari (Oktyabr 2026)</span>
+        </div>
+
+        <div class="calendar-card">
+          <div class="calendar-header">
+            <span class="calendar-month-title">Oktyabr 2026</span>
+            <div class="calendar-legend">
+              <div class="legend-item"><span class="legend-circle circle-avail"></span> Bo'sh</div>
+              <div class="legend-item"><span class="legend-circle circle-booked"></span> Band</div>
+              <div class="legend-item"><span class="legend-circle circle-selected"></span> Tanlangan</div>
+            </div>
+          </div>
+          
+          <div class="calendar-grid" id="calendar-grid">
+            <!-- Calendar days rendered by app.js -->
+          </div>
+
+          <div style="margin-top: 14px; font-size: 0.85rem;" id="calc-summary-text">
+            <!-- Dynamic calculation summary -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-actions-row">
+        <button class="btn-contact" id="btn-open-contact">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>Bog'lanish</span>
+        </button>
+
+        <button class="btn-download-pdf" id="btn-open-contract">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>PDF Ijara Shartnomasi</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       OFFICIAL RENTAL CONTRACT MODAL (PRINT & PDF PREVIEW)
+       ====================================================================== -->
+  <div class="modal-backdrop" id="contract-modal">
+    <div class="modal-window">
+      <button class="modal-close-btn" id="contract-close-btn" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="color:#FFF; font-size:1.2rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Rasmiy Elektron Ijara Shartnomasi</span>
+        </h3>
+        <button class="btn-download-pdf" id="btn-print-pdf">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>PDF Yuklab olish / Chop etish</span>
+        </button>
+      </div>
+
+      <!-- Printable White Paper Area -->
+      <div class="contract-paper" id="printable-contract">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       CONTACT / BOG'LANISH MODAL
+       ====================================================================== -->
+  <div class="modal-backdrop" id="contact-modal">
+    <div class="modal-window" style="max-width: 480px;">
+      <button class="modal-close-btn" id="contact-close-btn" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(255, 85, 0, 0.15); border: 1px solid #FF5500; display: inline-flex; align-items: center; justify-content: center; color: #FF5500; margin-bottom: 12px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3 style="font-size: 1.3rem; font-weight: 800; color: #FFF; margin-bottom: 4px;" id="contact-owner-name">Kompaniya Nomi</h3>
+        <p style="color: #94A3B8; font-size: 0.85rem;">Mas'ul menejer: <span id="contact-manager-name" style="color:#FFF;">Menejer</span></p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <a id="contact-phone-link" href="#" class="btn-primary-action" style="padding:14px; border-radius:12px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>Qo'ng'iroq qilish</span>
+        </a>
+
+        <a id="contact-tg-link" href="#" target="_blank" rel="noopener noreferrer" style="padding:14px; border-radius:12px; background:rgba(0,136,204,0.15); border:1px solid rgba(0,136,204,0.4); color:#38BDF8; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; transition:all 0.2s;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+          <span>Telegram orqali yozish</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Application Engine -->
+  <script src="app.js"></script>
+
+</body>
+</html>

@@ -3,1069 +3,521 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Vidra') }} — School Management System</title>
+    <title>TopSpot — Kinetik Ijara & Xizmatlar Ekotizimi</title>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @endif
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        :root {
-            --bg:      #09090b;
-            --bg2:     #0f0f12;
-            --border:  rgba(255,255,255,.07);
-            --accent:  #7c3aed;
-            --accent2: #6d28d9;
-            --text:    #fafafa;
-            --muted:   #71717a;
-            --subtle:  #3f3f46;
-        }
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-        }
-
-        a { text-decoration: none; color: inherit; }
-
-        /* ── NAV ── */
-        .site-header {
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(9,9,11,.92);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        nav {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%;
-            height: 60px;
-        }
-
-        .nav-brand {
-            display: flex; align-items: center; gap: 9px;
-            font-size: .9rem; font-weight: 700; color: var(--text);
-        }
-
-        .nav-brand-icon {
-            width: 32px; height: 32px; border-radius: 8px;
-            background: linear-gradient(145deg, #6d28d9, #4338ca);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(109,40,217,.35);
-            flex-shrink: 0;
-        }
-
-        .nav-links {
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        .nav-links a {
-            padding: 6px 14px;
-            border-radius: 7px;
-            font-size: .82rem; font-weight: 500; color: var(--muted);
-            transition: color .15s, background .15s;
-        }
-
-        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,.05); }
-
-        .nav-links .btn-login {
-            background: var(--accent);
-            color: #fff;
-            padding: 6px 16px;
-            font-weight: 600;
-            transition: background .15s, transform .15s;
-        }
-
-        .nav-links .btn-login:hover { background: var(--accent2); transform: translateY(-1px); }
-
-        /* hamburger button */
-        .nav-menu-btn {
-            display: none;
-            width: 36px; height: 36px;
-            background: rgba(255,255,255,.05);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            align-items: center; justify-content: center;
-            flex-shrink: 0;
-            color: var(--muted);
-            transition: background .15s, color .15s;
-        }
-
-        .nav-menu-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
-
-        /* animated bars */
-        .hbg { display: flex; flex-direction: column; gap: 4px; width: 18px; }
-        .hbg span {
-            display: block; height: 2px; border-radius: 2px;
-            background: currentColor;
-            transition: transform .25s ease, opacity .25s ease, width .25s ease;
-            transform-origin: center;
-        }
-        .hbg span:nth-child(1) { width: 18px; }
-        .hbg span:nth-child(2) { width: 13px; }
-        .hbg span:nth-child(3) { width: 18px; }
-
-        .nav-menu-btn.active .hbg span:nth-child(1) { transform: translateY(6px) rotate(45deg); width: 18px; }
-        .nav-menu-btn.active .hbg span:nth-child(2) { opacity: 0; }
-        .nav-menu-btn.active .hbg span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); width: 18px; }
-
-        /* collapsible dropdown */
-        .nav-collapse {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height .3s cubic-bezier(.4,0,.2,1);
-        }
-
-        .nav-collapse.open { max-height: 240px; }
-
-        .nav-collapse-inner {
-            padding: 10px 5% 16px;
-            display: flex; flex-direction: column; gap: 4px;
-            border-top: 1px solid var(--border);
-        }
-
-        .nav-collapse-inner a {
-            display: block;
-            padding: 10px 14px; border-radius: 8px;
-            font-size: .88rem; font-weight: 500; color: var(--muted);
-            transition: background .15s, color .15s;
-        }
-
-        .nav-collapse-inner a:hover { background: rgba(255,255,255,.06); color: var(--text); }
-
-        .nav-collapse-inner .btn-login {
-            background: var(--accent); color: #fff;
-            font-weight: 700; text-align: center; margin-top: 4px;
-        }
-
-        .nav-collapse-inner .btn-login:hover { background: var(--accent2); }
-
-        /* ── HERO ── */
-        .hero {
-            text-align: center;
-            padding: 100px 5% 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -120px; left: 50%; transform: translateX(-50%);
-            width: 700px; height: 500px;
-            background: radial-gradient(ellipse, rgba(109,40,217,.13), transparent 68%);
-            pointer-events: none;
-        }
-
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 12px;
-            background: rgba(124,58,237,.08);
-            border: 1px solid rgba(124,58,237,.18);
-            border-radius: 999px;
-            font-size: .72rem; font-weight: 600; color: #a78bfa;
-            letter-spacing: .06em; text-transform: uppercase;
-            margin-bottom: 24px;
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 6vw, 3.8rem);
-            font-weight: 900;
-            letter-spacing: -.04em;
-            line-height: 1.1;
-            color: var(--text);
-            margin-bottom: 20px;
-        }
-
-        .hero h1 span {
-            background: linear-gradient(135deg, #a78bfa, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-desc {
-            font-size: clamp(.9rem, 2vw, 1.08rem);
-            color: var(--muted);
-            line-height: 1.7;
-            max-width: 560px;
-            margin: 0 auto 36px;
-        }
-
-        .hero-cta {
-            display: flex; align-items: center; justify-content: center;
-            gap: 12px; flex-wrap: wrap;
-        }
-
-        .btn-primary {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 11px 24px;
-            background: var(--accent); color: #fff;
-            font-size: .88rem; font-weight: 700;
-            border-radius: 9px; border: none; cursor: pointer;
-            transition: background .15s, transform .15s, box-shadow .15s;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent2);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(109,40,217,.35);
-        }
-
-        .btn-secondary {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 11px 24px;
-            background: transparent; color: var(--text);
-            font-size: .88rem; font-weight: 600;
-            border-radius: 9px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: background .15s, border-color .15s, transform .15s;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,.05);
-            border-color: rgba(255,255,255,.14);
-            transform: translateY(-2px);
-        }
-
-        /* ── STATS ── */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .stat {
-            background: var(--bg);
-            padding: 28px 20px;
-            text-align: center;
-        }
-
-        .stat-num {
-            font-size: 1.8rem; font-weight: 900;
-            color: var(--text); letter-spacing: -.03em;
-        }
-
-        .stat-num span { color: var(--accent); }
-
-        .stat-label { font-size: .76rem; color: var(--muted); margin-top: 4px; }
-
-        /* ── SECTION WRAPPER ── */
-        .section { padding: 72px 5%; }
-
-        .section-head { text-align: center; margin-bottom: 48px; }
-
-        .section-tag {
-            display: inline-block;
-            font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-            color: var(--accent); margin-bottom: 10px;
-        }
-
-        .section-head h2 {
-            font-size: clamp(1.4rem, 3vw, 2rem);
-            font-weight: 800; letter-spacing: -.03em;
-            color: var(--text); margin-bottom: 10px;
-        }
-
-        .section-head p { font-size: .9rem; color: var(--muted); max-width: 480px; margin: 0 auto; }
-
-        /* ── MODULES GRID ── */
-        .modules-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .module-card {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 22px;
-            transition: border-color .2s, transform .2s, box-shadow .2s;
-            cursor: default;
-        }
-
-        .module-card:hover {
-            border-color: rgba(124,58,237,.3);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,.3);
-        }
-
-        .module-icon {
-            width: 40px; height: 40px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem; margin-bottom: 14px;
-        }
-
-        .module-card h3 {
-            font-size: .9rem; font-weight: 700; color: var(--text);
-            margin-bottom: 6px;
-        }
-
-        .module-card p {
-            font-size: .78rem; color: var(--muted); line-height: 1.55;
-        }
-
-        .module-tags {
-            display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px;
-        }
-
-        .module-tag {
-            font-size: .66rem; font-weight: 600;
-            padding: 2px 8px; border-radius: 4px;
-            background: rgba(124,58,237,.08);
-            color: #a78bfa;
-            border: 1px solid rgba(124,58,237,.15);
-        }
-
-        /* ── WHY SECTION ── */
-        .why-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .why-card {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .why-icon {
-            font-size: 1.4rem; margin-bottom: 10px;
-        }
-
-        .why-card h4 { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: 5px; }
-        .why-card p  { font-size: .78rem; color: var(--muted); line-height: 1.55; }
-
-        /* ── CTA BANNER ── */
-        .cta-banner {
-            margin: 0 5% 72px;
-            background: linear-gradient(135deg, rgba(109,40,217,.14), rgba(67,56,202,.08));
-            border: 1px solid rgba(124,58,237,.2);
-            border-radius: 18px;
-            padding: 52px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-banner::before {
-            content: '';
-            position: absolute;
-            top: -60px; left: 50%; transform: translateX(-50%);
-            width: 400px; height: 300px;
-            background: radial-gradient(ellipse, rgba(109,40,217,.12), transparent 70%);
-            pointer-events: none;
-        }
-
-        .cta-banner h2 {
-            font-size: clamp(1.3rem, 3vw, 2rem);
-            font-weight: 800; letter-spacing: -.03em;
-            color: var(--text); margin-bottom: 10px;
-            position: relative;
-        }
-
-        .cta-banner p {
-            font-size: .88rem; color: var(--muted);
-            margin-bottom: 28px; position: relative;
-        }
-
-        .cta-banner .cta-btns {
-            display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;
-            position: relative;
-        }
-
-        /* ── CONTACT STRIP ── */
-        .contact-strip {
-            display: flex; align-items: center; justify-content: center; gap: 16px;
-            padding: 20px 5%;
-            border-top: 1px solid var(--border);
-            background: var(--bg2);
-            flex-wrap: wrap;
-            text-align: center;
-        }
-
-        .contact-strip-icon {
-            width: 36px; height: 36px; border-radius: 8px;
-            background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .contact-strip-label { font-size: .68rem; color: var(--muted); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
-        .contact-strip-num   { font-size: .92rem; font-weight: 700; color: #22c55e; }
-
-        /* ── FOOTER ── */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 24px 5%;
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 12px;
-        }
-
-        .footer-brand {
-            display: flex; align-items: center; gap: 8px;
-            font-size: .82rem; font-weight: 600; color: var(--muted);
-        }
-
-        .footer-brand-icon {
-            width: 24px; height: 24px; border-radius: 6px;
-            background: linear-gradient(145deg, #6d28d9, #4338ca);
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .footer-links {
-            display: flex; gap: 20px; flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            font-size: .78rem; color: var(--subtle);
-            transition: color .14s;
-        }
-
-        .footer-links a:hover { color: var(--muted); }
-
-        .footer-copy { font-size: .74rem; color: var(--subtle); }
-
-        /* ── RESPONSIVE ── */
-        @media (max-width: 900px) {
-            .stats { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 640px) {
-            .nav-links { display: none; }
-            .nav-menu-btn { display: flex; }
-            .hero { padding: 72px 5% 56px; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            .cta-banner { padding: 36px 24px; }
-            footer { flex-direction: column; align-items: flex-start; }
-        }
-
-        @media (max-width: 400px) {
-            .stats { grid-template-columns: 1fr 1fr; }
-            .stat-num { font-size: 1.4rem; }
-        }
-
-        /* ── PAGE LOADER ── */
-        #page-loader {
-            position: fixed; inset: 0; z-index: 9999;
-            background: #09090b;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 0;
-            transition: opacity .55s ease, transform .55s ease;
-        }
-
-        #page-loader.out {
-            opacity: 0;
-            transform: scale(1.06);
-            pointer-events: none;
-        }
-
-        /* pulse rings */
-        .ldr-rings {
-            position: absolute;
-            width: 180px; height: 180px;
-        }
-
-        .ldr-ring {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            border: 1px solid rgba(124,58,237,.35);
-            animation: ldr-pulse 2.4s ease-out infinite;
-        }
-
-        .ldr-ring:nth-child(2) { animation-delay: .8s; }
-        .ldr-ring:nth-child(3) { animation-delay: 1.6s; }
-
-        @keyframes ldr-pulse {
-            0%   { transform: scale(.55); opacity: .8; }
-            100% { transform: scale(1.6);  opacity: 0; }
-        }
-
-        /* spinning arc */
-        .ldr-arc-wrap {
-            position: relative;
-            width: 84px; height: 84px;
-            flex-shrink: 0;
-        }
-
-        .ldr-arc {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, #7c3aed 0%, #a78bfa 30%, transparent 60%);
-            animation: ldr-spin 1.1s linear infinite;
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 0);
-            mask:         radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 0);
-        }
-
-        @keyframes ldr-spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* icon center */
-        .ldr-icon-bg {
-            position: absolute; inset: 8px;
-            border-radius: 50%;
-            background: #0f0f12;
-            border: 1px solid rgba(255,255,255,.07);
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* text block */
-        .ldr-text {
-            margin-top: 28px;
-            text-align: center;
-            animation: ldr-fadein .6s ease both;
-            animation-delay: .2s;
-        }
-
-        @keyframes ldr-fadein {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .ldr-name {
-            font-size: 1.25rem; font-weight: 800;
-            color: #fafafa; letter-spacing: -.03em;
-            margin-bottom: 8px;
-        }
-
-        /* AI badge */
-        .ldr-badge {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 5px 12px;
-            background: rgba(124,58,237,.08);
-            border: 1px solid rgba(124,58,237,.2);
-            border-radius: 999px;
-            font-size: .72rem; font-weight: 600; color: #a78bfa;
-            letter-spacing: .05em; text-transform: uppercase;
-        }
-
-        /* animated green dot */
-        .ldr-dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: #22c55e;
-            animation: ldr-blink 1.1s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-
-        @keyframes ldr-blink {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: .3; transform: scale(.7); }
-        }
-
-        /* typing dots */
-        .ldr-dots { display: inline-flex; gap: 3px; margin-left: 2px; }
-        .ldr-dots span {
-            width: 3px; height: 3px; border-radius: 50%;
-            background: #a78bfa;
-            animation: ldr-dot-bounce .9s ease-in-out infinite;
-        }
-        .ldr-dots span:nth-child(2) { animation-delay: .15s; }
-        .ldr-dots span:nth-child(3) { animation-delay: .3s; }
-
-        @keyframes ldr-dot-bounce {
-            0%, 80%, 100% { transform: translateY(0); opacity: .4; }
-            40%            { transform: translateY(-4px); opacity: 1; }
-        }
-
-        /* progress bar */
-        .ldr-progress {
-            margin-top: 32px;
-            width: 160px; height: 2px;
-            background: rgba(255,255,255,.06);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .ldr-progress-bar {
-            height: 100%; width: 0%;
-            background: linear-gradient(90deg, #6d28d9, #a78bfa);
-            border-radius: 2px;
-            animation: ldr-fill 2s cubic-bezier(.4,0,.2,1) forwards;
-        }
-
-        @keyframes ldr-fill {
-            0%   { width: 0%; }
-            60%  { width: 75%; }
-            85%  { width: 88%; }
-            100% { width: 100%; }
-        }
-
-        /* body hidden during load */
-        body.loading { overflow: hidden; }
-    </style>
+    <!-- TopSpot Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('topspot/styles.css') }}"/>
 </head>
-<body class="loading">
+<body>
 
-<!-- ══ PAGE LOADER ══ -->
-<div id="page-loader" role="status" aria-label="Loading">
-
-    <!-- pulse rings (behind) -->
-    <div class="ldr-rings">
-        <div class="ldr-ring"></div>
-        <div class="ldr-ring"></div>
-        <div class="ldr-ring"></div>
-    </div>
-
-    <!-- spinning arc + icon -->
-    <div class="ldr-arc-wrap">
-        <div class="ldr-arc"></div>
-        <div class="ldr-icon-bg">
-            <svg width="22" height="22" fill="none" stroke="#a78bfa" stroke-width="1.8" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
-        </div>
-    </div>
-
-    <!-- text -->
-    <div class="ldr-text">
-        <div class="ldr-name">{{ config('app.name', 'Vidra') }}</div>
-        <div class="ldr-badge">
-            <span class="ldr-dot"></span>
-            AI Powered
-            <span class="ldr-dots">
-                <span></span><span></span><span></span>
-            </span>
-        </div>
-    </div>
-
-    <!-- progress bar -->
-    <div class="ldr-progress">
-        <div class="ldr-progress-bar"></div>
-    </div>
-
-</div>
-
-<!-- ══ HEADER ══ -->
-<header class="site-header">
-<nav>
-    <div class="nav-brand">
-        <div class="nav-brand-icon">
-            <svg width="16" height="16" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
-        </div>
-        {{ config('app.name', 'Vidra') }}
-    </div>
-
-    <div class="nav-links">
-        <a href="{{ url('/docs') }}">Docs</a>
-        @auth
-            <a href="{{ url('/dashboard') }}" class="btn-login" style="border-radius:7px;">Dashboard</a>
-        @else
-            <a href="{{ route('login') }}" class="btn-login" style="border-radius:7px;">Sign in</a>
-        @endauth
-    </div>
-
-    <button class="nav-menu-btn" id="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false">
-        <div class="hbg">
-            <span></span><span></span><span></span>
-        </div>
-    </button>
-</nav>
-
-<!-- collapsible dropdown -->
-<div class="nav-collapse" id="nav-collapse">
-    <div class="nav-collapse-inner">
-        <a href="{{ url('/docs') }}">Docs</a>
-        @auth
-            <a href="{{ url('/dashboard') }}" class="btn-login" style="border-radius:8px;">Dashboard</a>
-        @else
-            <a href="{{ route('login') }}" class="btn-login" style="border-radius:8px;">Sign in</a>
-        @endauth
-    </div>
-</div>
-</header>
-
-<!-- ══ HERO ══ -->
-<section class="hero">
-    <div class="hero-badge">
-        <svg width="9" height="9" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4"/></svg>
-        School Management System
-    </div>
-    <h1>
-        Everything your school needs,<br>
-        <span>in one platform.</span>
-    </h1>
-    <p class="hero-desc">
-        Vidra brings together 13 powerful modules — from student admissions and fee collection to timetabling, exams, and real-time webhooks — so you can run your institution without juggling spreadsheets.
-    </p>
-    <div class="hero-cta">
-        @auth
-            <a href="{{ url('/dashboard') }}" class="btn-primary">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                Go to Dashboard
-            </a>
-        @else
-            <a href="{{ route('login') }}" class="btn-primary">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
-                </svg>
-                Sign in
-            </a>
-        @endauth
-        <a href="{{ url('/docs') }}" class="btn-secondary">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            View Docs
-        </a>
-    </div>
-</section>
-
-<!-- ══ STATS ══ -->
-<div class="stats">
-    <div class="stat">
-        <div class="stat-num">13<span>+</span></div>
-        <div class="stat-label">Core Modules</div>
-    </div>
-    <div class="stat">
-        <div class="stat-num">100<span>+</span></div>
-        <div class="stat-label">Features</div>
-    </div>
-    <div class="stat">
-        <div class="stat-num">3</div>
-        <div class="stat-label">Built-in Roles</div>
-    </div>
-    <div class="stat">
-        <div class="stat-num">∞</div>
-        <div class="stat-label">Bundle Support</div>
-    </div>
-</div>
-
-<!-- ══ MODULES ══ -->
-<section class="section">
-    <div class="section-head">
-        <div class="section-tag">Core Modules</div>
-        <h2>Everything built in, nothing bolted on</h2>
-        <p>All 13 modules ship together — no add-ons required. Each one integrates natively with the rest.</p>
-    </div>
-
-    <div class="modules-grid">
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.18);">🎓</div>
-            <h3>Student Management</h3>
-            <p>Admissions, profiles, guardian records, section assignments, attendance history, and academic results all in one place.</p>
-            <div class="module-tags">
-                <span class="module-tag">Admissions</span>
-                <span class="module-tag">Profiles</span>
-                <span class="module-tag">Results</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.16);">👨‍🏫</div>
-            <h3>Staff Management</h3>
-            <p>Manage teacher and support staff records, departments, employment types, and leave balances from a unified interface.</p>
-            <div class="module-tags">
-                <span class="module-tag">Teachers</span>
-                <span class="module-tag">Departments</span>
-                <span class="module-tag">Leave</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.16);">🏫</div>
-            <h3>Class Management</h3>
-            <p>Create classes, sections, and assign class teachers. Control student capacity and organize your school structure.</p>
-            <div class="module-tags">
-                <span class="module-tag">Classes</span>
-                <span class="module-tag">Sections</span>
-                <span class="module-tag">Teachers</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.16);">📚</div>
-            <h3>Subject Management</h3>
-            <p>Define subjects, link them to classes and academic years, manage textbooks, and map qualified teachers to each subject.</p>
-            <div class="module-tags">
-                <span class="module-tag">Subjects</span>
-                <span class="module-tag">Curriculum</span>
-                <span class="module-tag">Textbooks</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.16);">📅</div>
-            <h3>Timetable Management</h3>
-            <p>Build class schedules with rooms, periods, and days. Handle substitute assignments and one-off special events easily.</p>
-            <div class="module-tags">
-                <span class="module-tag">Periods</span>
-                <span class="module-tag">Rooms</span>
-                <span class="module-tag">Substitutes</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.16);">📝</div>
-            <h3>Exam Management</h3>
-            <p>Schedule exams, record marks, generate grade-based results, and produce student report cards automatically.</p>
-            <div class="module-tags">
-                <span class="module-tag">Exams</span>
-                <span class="module-tag">Marks</span>
-                <span class="module-tag">Report Cards</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.16);">💰</div>
-            <h3>Fee Management</h3>
-            <p>Create fee structures, collect payments, apply discounts and waivers, and track outstanding balances with full financial reporting.</p>
-            <div class="module-tags">
-                <span class="module-tag">Payments</span>
-                <span class="module-tag">Discounts</span>
-                <span class="module-tag">Reports</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.16);">✅</div>
-            <h3>Attendance Management</h3>
-            <p>Mark daily student and staff attendance, view session-wise records, and generate attendance summary reports by class.</p>
-            <div class="module-tags">
-                <span class="module-tag">Daily</span>
-                <span class="module-tag">Sessions</span>
-                <span class="module-tag">Reports</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.16);">💬</div>
-            <h3>Communication</h3>
-            <p>Send announcements, SMS alerts, and email notifications. Manage notice boards and broadcast messages to parents and staff.</p>
-            <div class="module-tags">
-                <span class="module-tag">Notices</span>
-                <span class="module-tag">SMS</span>
-                <span class="module-tag">Email</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.16);">🚌</div>
-            <h3>Hostel & Transport</h3>
-            <p>Manage hostel rooms and assign students. Configure transport routes, vehicles, and bus stop assignments with fees.</p>
-            <div class="module-tags">
-                <span class="module-tag">Hostel</span>
-                <span class="module-tag">Routes</span>
-                <span class="module-tag">Vehicles</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.16);">🔐</div>
-            <h3>Role-Based Access</h3>
-            <p>Fine-grained permissions for every user. Assign custom roles, restrict routes, and control what each staff member can see or do.</p>
-            <div class="module-tags">
-                <span class="module-tag">Roles</span>
-                <span class="module-tag">Permissions</span>
-                <span class="module-tag">Users</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.16);">🔄</div>
-            <h3>Data Transfer</h3>
-            <p>Import students and staff from CSV, export records to spreadsheets, and migrate data between academic years in bulk.</p>
-            <div class="module-tags">
-                <span class="module-tag">Import</span>
-                <span class="module-tag">Export</span>
-                <span class="module-tag">Migration</span>
-            </div>
-        </div>
-
-        <div class="module-card">
-            <div class="module-icon" style="background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.16);">🔗</div>
-            <h3>Webhooks</h3>
-            <p>Receive real-time HTTP callbacks when school events occur. Configure endpoints, monitor logs, and debug failed deliveries.</p>
-            <div class="module-tags">
-                <span class="module-tag">Real-time</span>
-                <span class="module-tag">Logs</span>
-                <span class="module-tag">Events</span>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<!-- ══ WHY VIDRA ══ -->
-<section class="section" style="padding-top:0;">
-    <div class="section-head">
-        <div class="section-tag">Why Vidra</div>
-        <h2>Built for real schools</h2>
-        <p>Designed from the ground up for the way school administrators actually work.</p>
-    </div>
-
-    <div class="why-grid">
-        <div class="why-card">
-            <div class="why-icon">⚡</div>
-            <h4>Instant Setup</h4>
-            <p>Go from zero to running in minutes. No complex configuration — sensible defaults ship out of the box.</p>
-        </div>
-        <div class="why-card">
-            <div class="why-icon">🧩</div>
-            <h4>Bundle System</h4>
-            <p>Extend Vidra with custom bundles. Upload a ZIP and the system registers routes, permissions, and menus automatically.</p>
-        </div>
-        <div class="why-card">
-            <div class="why-icon">🔒</div>
-            <h4>Permission-First</h4>
-            <p>Every route is protected. Role-based access control is built into every module — no taping it on afterwards.</p>
-        </div>
-        <div class="why-card">
-            <div class="why-icon">📊</div>
-            <h4>Full Audit Trails</h4>
-            <p>Track every action — payments, attendance, exam results, and webhook deliveries — with timestamps and logs.</p>
-        </div>
-    </div>
-</section>
-
-<!-- ══ CTA BANNER ══ -->
-<div class="cta-banner">
-    <h2>Ready to simplify your school?</h2>
-    <p>Sign in with the demo account to explore every module — no setup required.</p>
-    <div class="cta-btns">
-        @auth
-            <a href="{{ url('/dashboard') }}" class="btn-primary">Go to Dashboard</a>
-        @else
-            <a href="{{ route('login') }}" class="btn-primary">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
-                </svg>
-                Sign in to demo
-            </a>
-        @endauth
-        <a href="{{ url('/docs') }}" class="btn-secondary">Browse Documentation</a>
-    </div>
-</div>
-
-<!-- ══ CONTACT STRIP ══ -->
-<div class="contact-strip">
-    <div class="contact-strip-icon">
-        <svg width="15" height="15" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+  <!-- ======================================================================
+       2. INTRO VA LOADING ANIMATSIYASI (TOPSPOT LOGO DOCKING ANIMATION)
+       ====================================================================== -->
+  <div id="intro-screen">
+    <div class="intro-container">
+      <div class="logo-animation-wrapper">
+        <!-- White Architectural Chevron (descending from top) -->
+        <svg class="intro-chevron" viewBox="0 0 100 70" fill="none">
+          <path d="M50 15L85 50L75 60L50 35L25 60L15 50L50 15Z" fill="#FFFFFF"/>
         </svg>
-    </div>
-    <div>
-        <div class="contact-strip-label">Need help?</div>
-        <div class="contact-strip-num">+91 63924 24180</div>
-    </div>
-    <div style="font-size:.8rem;color:var(--muted);">Call us for support &amp; enquiries</div>
-</div>
 
-<!-- ══ FOOTER ══ -->
-<footer>
-    <div class="footer-brand">
-        <div class="footer-brand-icon">
-            <svg width="12" height="12" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
+        <!-- Kinetic Orange Core (rising from bottom) -->
+        <svg class="intro-core" viewBox="0 0 50 50" fill="none">
+          <circle cx="25" cy="25" r="18" fill="#FF5500"/>
+          <circle cx="25" cy="25" r="23" stroke="#FF5500" stroke-width="2" stroke-opacity="0.5"/>
+        </svg>
+
+        <div class="intro-glow-ring"></div>
+      </div>
+
+      <div class="intro-brand-title">TOP<span>SPOT</span></div>
+      <div class="intro-tagline">Kinetik Ijara & Xizmatlar Ekotizimi</div>
+
+      <div class="intro-loading-box">
+        <div class="intro-progress-bar">
+          <div class="intro-progress-fill"></div>
         </div>
-        {{ config('app.name', 'Vidra') }}
+
+        <div class="intro-status-text">
+          <div class="gps-radar-dot"></div>
+          <span>GPS klasterlari faollashtirilmoqda...</span>
+        </div>
+
+        <div id="intro-coord" class="intro-coord-preview">
+          GPS klaster: 41.31108° N, 69.24056° E
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="footer-links">
-        <a href="{{ url('/docs') }}">Documentation</a>
-        @auth
-            <a href="{{ url('/dashboard') }}">Dashboard</a>
-        @else
-            <a href="{{ route('login') }}">Sign in</a>
-        @endauth
+  <!-- ======================================================================
+       SITE HEADER
+       ====================================================================== -->
+  <header class="site-header">
+    <div class="header-container">
+      <!-- Brand Logo -->
+      <div class="brand-logo-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="logo-symbol">
+          <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+            <path d="M20 5L34 20L29 25L20 16L11 25L6 20L20 5Z" fill="#FFFFFF"/>
+            <circle cx="20" cy="28" r="7" fill="#FF5500"/>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <div class="brand-name">TOP<span>SPOT</span></div>
+          <div class="brand-sub">Kinetic Platform</div>
+        </div>
+      </div>
+
+      <!-- Geo Cluster Live Badge -->
+      <div class="header-geo-badge">
+        <div class="geo-live-pulse"></div>
+        <span>Faol hudud: <strong>Toshkent markazi</strong> (Amir Temur)</span>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button class="btn-header-action" onclick="alert('TopSpot hamkorlik xizmati: STIR va OneID orqali ro\'yxatdan o\'tish ochiq.')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>OneID Xavfsizlik</span>
+        </button>
+        <button class="btn-header-action btn-primary-action" onclick="alert('Yangi e\'lon joylashtirish formasi tez orada ochiladi.')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>E'lon berish</span>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <div class="footer-copy">&copy; {{ date('Y') }} {{ config('app.name', 'Vidra') }}. School ERP.</div>
-</footer>
+  <!-- ======================================================================
+       MAIN APPLICATION LAYOUT
+       ====================================================================== -->
+  <main class="main-wrapper">
 
-<script>
-/* ── Loader dismiss ── */
-(function () {
-    function dismissLoader() {
-        const loader = document.getElementById('page-loader');
-        if (!loader) return;
-        loader.classList.add('out');
-        loader.addEventListener('transitionend', function () {
-            loader.style.display = 'none';
-            document.body.classList.remove('loading');
-        }, { once: true });
-    }
+    <!-- ==================================================================
+         3. E'LONLAR TAXTASI (AUTO-SLIDING CAROUSEL BANNER)
+         ================================================================== -->
+    <section class="carousel-section">
+      <div class="carousel-container" id="carousel-container">
+        <div class="carousel-track" id="carousel-track">
 
-    // Dismiss after progress bar completes (~2.1s), or immediately if page already loaded
-    if (document.readyState === 'complete') {
-        setTimeout(dismissLoader, 400);
-    } else {
-        window.addEventListener('load', function () {
-            setTimeout(dismissLoader, 400);
-        });
-    }
-    // Hard cap: never show loader more than 3.5s regardless
-    setTimeout(dismissLoader, 3500);
-})();
+          <!-- SLIDE 1: RESPUBLIKA VIP -->
+          <div class="carousel-slide slide-vip">
+            <div class="slide-content-left">
+              <div class="slide-badge-row">
+                <span class="tier-badge tier-vip">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  RESPUBLIKA VIP
+                </span>
+                <span class="verified-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  OneID & STIR Tasdiqlangan
+                </span>
+              </div>
+              <h2 class="slide-title">CAT 320D Og'ir Ekskavator & Maxsus Texnika Parki</h2>
+              <p class="slide-desc">Respublika bo'ylab yirik infratuzilma loyihalari uchun 24/7 operativ texnik ta'minot. Tajribali boshqaruv operatorlari bilan.</p>
+              <div class="slide-meta-row">
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>24/7 Yetkazish</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Butun O'zbekiston hududi</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>Rasmiy PDF Shartnoma</span>
+                </div>
+              </div>
+            </div>
+            <div class="slide-content-right">
+              <div class="slide-price-tag">
+                <div class="price-sub">Maxsus Taklif</div>
+                <div class="price-main">480,000 <small>so'm/s</small></div>
+              </div>
+              <button class="btn-slide-cta" onclick="window.openProductById('m1')">
+                <span>Obyektni ko'rish</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
 
-function toggleNav() {
-    const btn      = document.getElementById('nav-toggle');
-    const collapse = document.getElementById('nav-collapse');
-    const isOpen   = collapse.classList.toggle('open');
-    btn.classList.toggle('active', isOpen);
-    btn.setAttribute('aria-expanded', isOpen);
-}
+          <!-- SLIDE 2: VILOYAT SHOSHILINCH -->
+          <div class="carousel-slide slide-urgent">
+            <div class="slide-content-left">
+              <div class="slide-badge-row">
+                <span class="tier-badge tier-urgent">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  VILOYAT SHOSHILINCH
+                </span>
+                <span class="verified-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Bojxona Klasteri
+                </span>
+              </div>
+              <h2 class="slide-title">Toshkent Viloyati: 5,000 m² A-Klass Bojxona Ombori & Logistika Markazi</h2>
+              <p class="slide-desc">Zangiota tumani, M-39 xalqaro trassa yoqasida. Bugun bo'shatildi! 8 ta gidravlik rampa va temir yo'l tarmog'i bilan.</p>
+              <div class="slide-meta-row">
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <span>Qo'riqlash 24/7</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Toshkent vil., Zangiota</span>
+                </div>
+              </div>
+            </div>
+            <div class="slide-content-right">
+              <div class="slide-price-tag">
+                <div class="price-sub">Shoshilinch Narx</div>
+                <div class="price-main">850,000 <small>so'm/s</small></div>
+              </div>
+              <button class="btn-slide-cta" onclick="window.openProductById('r1')">
+                <span>Lokatsiyani ko'rish</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
 
-// Close on outside click
-document.addEventListener('click', function (e) {
-    const btn      = document.getElementById('nav-toggle');
-    const collapse = document.getElementById('nav-collapse');
-    const header   = document.querySelector('.site-header');
-    if (!header.contains(e.target) && collapse.classList.contains('open')) {
-        collapse.classList.remove('open');
-        btn.classList.remove('active');
-        btn.setAttribute('aria-expanded', 'false');
-    }
-});
+          <!-- SLIDE 3: TUMAN LOKAL -->
+          <div class="carousel-slide slide-local">
+            <div class="slide-content-left">
+              <div class="slide-badge-row">
+                <span class="tier-badge tier-local">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  TUMAN LOKAL
+                </span>
+                <span class="verified-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  30 Daqiqada Yetkazish
+                </span>
+              </div>
+              <h2 class="slide-title">Yunusobod: Sanoat Dizel Generatorlari (50–250 kVA) va Uskunalar</h2>
+              <p class="slide-desc">Yunusobod 14-mavze bazasi. 3 km radius ichida bepul operativ yetkazish va tajribali elektromontajchi xizmati bilan.</p>
+              <div class="slide-meta-row">
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                  <span>Yoqilg'i & ATS ichida</span>
+                </div>
+                <div class="slide-meta-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Yunusobod 14, Toshkent</span>
+                </div>
+              </div>
+            </div>
+            <div class="slide-content-right">
+              <div class="slide-price-tag">
+                <div class="price-sub">Boshlang'ich Narx</div>
+                <div class="price-main">160,000 <small>so'm/s</small></div>
+              </div>
+              <button class="btn-slide-cta" onclick="window.openProductById('e1')">
+                <span>Bog'lanish</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </div>
 
-// Close on Escape
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-        const btn      = document.getElementById('nav-toggle');
-        const collapse = document.getElementById('nav-collapse');
-        collapse.classList.remove('open');
-        btn.classList.remove('active');
-        btn.setAttribute('aria-expanded', 'false');
-    }
-});
+        </div>
 
-// On resize to desktop, close the dropdown
-window.addEventListener('resize', function () {
-    if (window.innerWidth > 640) {
-        const btn      = document.getElementById('nav-toggle');
-        const collapse = document.getElementById('nav-collapse');
-        collapse.classList.remove('open');
-        btn.classList.remove('active');
-        btn.setAttribute('aria-expanded', 'false');
-    }
-});
-</script>
+        <!-- Carousel Navigation Controls -->
+        <button class="carousel-nav-btn carousel-prev" id="carousel-prev" aria-label="Oldingi slayd">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-nav-btn carousel-next" id="carousel-next" aria-label="Keyingi slayd">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+
+        <!-- Dots Pagination -->
+        <div class="carousel-dots" id="carousel-dots">
+          <div class="dot-indicator active" data-slide="0"></div>
+          <div class="dot-indicator" data-slide="1"></div>
+          <div class="dot-indicator" data-slide="2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         4. 4 TA ASOSIY VERTIKAL VA SUB-KATEGORIYALAR
+         ================================================================== -->
+    <section class="verticals-section">
+      <!-- 4 Verticals Grid -->
+      <div class="verticals-grid" id="verticals-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- Subcategories Chips Row -->
+      <div class="subcategories-container" id="subcategories-container">
+        <!-- Rendered dynamically by app.js based on active vertical -->
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         5. SPLIT-SCREEN (40% LISTING / 60% XARITA)
+         ================================================================== -->
+    <section class="split-screen-section">
+
+      <!-- LEFT COLUMN: 40% LISTINGS & FILTERS -->
+      <div class="listings-column">
+        
+        <!-- Controls Card (Radius Slider & Search) -->
+        <div class="listing-controls-card">
+          <div class="controls-row-top">
+            <div class="radius-badge-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+              <span>Qidiruv Radiusi</span>
+            </div>
+            <div class="radius-val-display" id="radius-val">8 km</div>
+          </div>
+
+          <!-- 1-15 km Slider -->
+          <div class="slider-wrap">
+            <input type="range" min="1" max="15" value="8" step="1" class="radius-slider" id="radius-slider" aria-label="Qidiruv radiusi">
+          </div>
+          <div class="slider-ticks">
+            <span>1 km (Yaqin)</span>
+            <span>5 km</span>
+            <span>10 km</span>
+            <span>15 km (Maksimal)</span>
+          </div>
+
+          <!-- Search Input -->
+          <div class="search-filter-row">
+            <div class="search-input-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="search-input" placeholder="Nomi, kompaniya yoki STIR bo'yicha qidiring...">
+            </div>
+          </div>
+
+          <div class="items-count-indicator" id="items-count-indicator">
+            <!-- Updated dynamically -->
+          </div>
+        </div>
+
+        <!-- Scrollable Listings Area -->
+        <div class="listings-scroll-area" id="listings-scroll-area">
+          <!-- Standardized Product Cards rendered by app.js -->
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: 60% XARITA (DARK MODE INTERACTIVE MAP) -->
+      <div class="map-column">
+        <!-- Floating Live Radar Header -->
+        <div class="map-radar-control-card">
+          <div class="radar-live-icon"></div>
+          <span>Kinetik GPS Radar: <strong>Faol</strong> (Tungi rejim)</span>
+        </div>
+
+        <!-- Leaflet Map Container -->
+        <div id="topspot-map"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       6. MAHSULOT PASPORTI VA XAVFSIZLIK (MODAL)
+       ====================================================================== -->
+  <div class="modal-backdrop" id="passport-modal">
+    <div class="modal-window">
+      <button class="modal-close-btn" id="passport-close-btn" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <!-- Passport Top Header -->
+      <div class="passport-header">
+        <div class="passport-img-box">
+          <img id="passport-img" src="" alt="Mahsulot rasmi">
+        </div>
+        <div class="passport-title-wrap">
+          <div class="passport-category-badge" id="passport-category">Kategoriya</div>
+          <h2 class="passport-title" id="passport-title">Mahsulot Nomi</h2>
+          <div class="passport-geo-row">
+            <span style="display:flex; align-items:center; gap:5px; color:#10B981;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <strong id="passport-rating">4.95</strong>
+            </span>
+            <span>•</span>
+            <span style="color:#10B981; font-weight:600;">Hozir ijaraga tayyor</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security & Trust Metrics Card (STIR / OneID) -->
+      <div class="security-status-card">
+        <div class="sec-metric-item">
+          <div class="sec-metric-title">Mulkdor Tashkilot</div>
+          <div class="sec-metric-value" id="passport-owner">Kompaniya nomi</div>
+        </div>
+        <div class="sec-metric-item">
+          <div class="sec-metric-title">STIR / INN Raqami</div>
+          <div class="sec-metric-value" style="font-family:monospace; color:#FF5500;" id="passport-stir">308941278</div>
+        </div>
+        <div class="sec-metric-item">
+          <div class="sec-metric-title">Davlat Verifikatsiyasi</div>
+          <div class="sec-metric-value badge-verified-emerald">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>OneID Tasdiqlangan ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ochiq Narx Matritsasi -->
+      <div>
+        <div class="matrix-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span>Standartlashtirilgan Ochiq Narx Matritsasi</span>
+        </div>
+
+        <div class="price-matrix-grid" style="margin-top: 12px;">
+          <div class="matrix-box">
+            <div class="matrix-period">Soatlik Stavka</div>
+            <div class="matrix-price" id="matrix-hourly">0 so'm</div>
+            <div class="matrix-terms">Minimal buyurtma: 2-3 soat</div>
+          </div>
+
+          <div class="matrix-box featured">
+            <div class="matrix-period" style="color:#FF5500;">Kunlik Ijara (Optimal)</div>
+            <div class="matrix-price" id="matrix-daily">0 so'm</div>
+            <div class="matrix-terms">10 soatlik to'liq smena</div>
+          </div>
+
+          <div class="matrix-box">
+            <div class="matrix-period">Oylik Shartnoma</div>
+            <div class="matrix-price" style="color:#FFF;" id="matrix-monthly">0 so'm</div>
+            <div class="matrix-terms">-15% Chegirma bilan</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px; font-size: 0.75rem; color: #94A3B8;">
+          Depozit (Garov sharti): <strong id="matrix-deposit" style="color: #FFF;">0 so'm</strong> • To'lov usullari: Naqd, O'zcard, Humo, Korporativ bank o'tkazmasi.
+        </div>
+      </div>
+
+      <!-- Texnik Parametrlar (Specs) -->
+      <div>
+        <div class="matrix-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Texnik Parametrlar & Xavfsizlik Kafolati</span>
+        </div>
+        <ul id="passport-specs" style="list-style:none; margin-top:10px;"></ul>
+      </div>
+
+      <!-- Real-Time Bandlik Kalendari -->
+      <div class="calendar-section">
+        <div class="matrix-section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Real Vaqtdagi Bandlik Kalendari (Oktyabr 2026)</span>
+        </div>
+
+        <div class="calendar-card">
+          <div class="calendar-header">
+            <span class="calendar-month-title">Oktyabr 2026</span>
+            <div class="calendar-legend">
+              <div class="legend-item"><span class="legend-circle circle-avail"></span> Bo'sh</div>
+              <div class="legend-item"><span class="legend-circle circle-booked"></span> Band</div>
+              <div class="legend-item"><span class="legend-circle circle-selected"></span> Tanlangan</div>
+            </div>
+          </div>
+          
+          <div class="calendar-grid" id="calendar-grid">
+            <!-- Calendar days rendered by app.js -->
+          </div>
+
+          <div style="margin-top: 14px; font-size: 0.85rem;" id="calc-summary-text">
+            <!-- Dynamic calculation summary -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-actions-row">
+        <button class="btn-contact" id="btn-open-contact">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>Bog'lanish</span>
+        </button>
+
+        <button class="btn-download-pdf" id="btn-open-contract">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>PDF Ijara Shartnomasi</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       OFFICIAL RENTAL CONTRACT MODAL (PRINT & PDF PREVIEW)
+       ====================================================================== -->
+  <div class="modal-backdrop" id="contract-modal">
+    <div class="modal-window">
+      <button class="modal-close-btn" id="contract-close-btn" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="color:#FFF; font-size:1.2rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5500" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Rasmiy Elektron Ijara Shartnomasi</span>
+        </h3>
+        <button class="btn-download-pdf" id="btn-print-pdf">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>PDF Yuklab olish / Chop etish</span>
+        </button>
+      </div>
+
+      <!-- Printable White Paper Area -->
+      <div class="contract-paper" id="printable-contract">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       CONTACT / BOG'LANISH MODAL
+       ====================================================================== -->
+  <div class="modal-backdrop" id="contact-modal">
+    <div class="modal-window" style="max-width: 480px;">
+      <button class="modal-close-btn" id="contact-close-btn" aria-label="Yopish">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(255, 85, 0, 0.15); border: 1px solid #FF5500; display: inline-flex; align-items: center; justify-content: center; color: #FF5500; margin-bottom: 12px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3 style="font-size: 1.3rem; font-weight: 800; color: #FFF; margin-bottom: 4px;" id="contact-owner-name">Kompaniya Nomi</h3>
+        <p style="color: #94A3B8; font-size: 0.85rem;">Mas'ul menejer: <span id="contact-manager-name" style="color:#FFF;">Menejer</span></p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <a id="contact-phone-link" href="#" class="btn-primary-action" style="padding:14px; border-radius:12px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>Qo'ng'iroq qilish</span>
+        </a>
+
+        <a id="contact-tg-link" href="#" target="_blank" rel="noopener noreferrer" style="padding:14px; border-radius:12px; background:rgba(0,136,204,0.15); border:1px solid rgba(0,136,204,0.4); color:#38BDF8; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; transition:all 0.2s;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+          <span>Telegram orqali yozish</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- TopSpot Application Engine -->
+  <script src="{{ asset('topspot/app.js') }}"></script>
 
 </body>
 </html>
